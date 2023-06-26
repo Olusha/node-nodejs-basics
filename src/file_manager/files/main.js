@@ -1,16 +1,12 @@
 import { handleOcOperations } from './oc_operations.js';
 import { copyFile, createFile, moveFile, printFileContent, removeFile, renameFile } from './files_operations.js';
-import {changeDirectory, goUp, printLsInfo} from './directory.js';
-import {userInfo} from 'os';
-import { decompress, compress } from './zip.js';
+import { changeDirectory, goUp, printLsInfo } from './directory.js';
+import { compress, decompress } from './zip.js';
 import { calculateHash } from './hash.js';
-import { logError, getArgsMap } from './utils.js';
+import { logError } from './utils.js';
 
-const args = getArgsMap();
-const userName = args.get('username');
-process.stdout.write(`Welcome to the File Manager, ${userName || userInfo().username}!`);
+
 changeDirectory();
-
 
 const echoInput = (chunk) => {
     const values = chunk.toString().split(' ');
@@ -65,7 +61,7 @@ const echoInput = (chunk) => {
             calculateHash(firstParam);
             break;
         default:
-            console.log('Operation is not defined')
+            console.log('Invalid input')
         }
     } catch (e) {
         logError(e);

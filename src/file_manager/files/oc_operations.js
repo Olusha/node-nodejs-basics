@@ -21,7 +21,7 @@ const handleOcOperations = (param) => {
             console.log(arch());
             break;
         default:
-            console.log('Operation is not defined');
+            console.log('Invalid input');
         }
     } catch (e) {
         logError(e);

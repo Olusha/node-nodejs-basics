@@ -1,4 +1,5 @@
 import { join } from 'path';
+import { userInfo } from 'os';
 
 const getFullPath = (fileName) => {
     return join(process.cwd(), fileName);
@@ -6,6 +7,11 @@ const getFullPath = (fileName) => {
 
 const logError = (error) => {
     console.log('Operation failed', error);
+}
+
+const getUserName = () => {
+    const args = getArgsMap();
+    return args.get('username') || userInfo().username;
 }
 
 const getArgsMap = () => {
@@ -22,4 +28,4 @@ const getArgsMap = () => {
     return argsMap;
 };
 
-export {getFullPath, logError, getArgsMap}
+export {getFullPath, logError, getArgsMap, getUserName}
