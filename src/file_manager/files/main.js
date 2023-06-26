@@ -1,10 +1,10 @@
-import { getArgsMap } from '../../cli/args.js';
 import { handleOcOperations } from './oc_operations.js';
 import { copyFile, createFile, moveFile, printFileContent, removeFile, renameFile } from './files_operations.js';
 import {changeDirectory, goUp, printLsInfo} from './directory.js';
 import {userInfo} from 'os';
 import { decompress, compress } from './zip.js';
 import { calculateHash } from './hash.js';
+import { logError, getArgsMap } from './utils.js';
 
 const args = getArgsMap();
 const userName = args.get('username');
@@ -15,7 +15,8 @@ changeDirectory();
 const echoInput = (chunk) => {
     const values = chunk.toString().split(' ');
     const operation = values[0].trim();
-    const param = values[1]?.trim();
+    const firstParam = values[1]?.trim();
+    const secondParam = values[2]?.trim();
     try {
         switch (operation) {
         case '.exit':
@@ -25,49 +26,49 @@ const echoInput = (chunk) => {
             printLsInfo();
             break;
         case 'cd':
-            changeDirectory(param);
+            changeDirectory(firstParam);
             break;
         case 'up':
             goUp();
             break;
         case 'cat':
-            printFileContent(param);
+            printFileContent(firstParam);
             break;
         case 'add':
-            createFile(param);
+            createFile(firstParam);
             break;
         case 'rn':
-            renameFile(param);
+            renameFile(firstParam, secondParam);
             break;
         case 'cp':
-            copyFile(param);
+            copyFile(firstParam, secondParam);
             break;
         case 'move':
-            moveFile(param);
+            moveFile(firstParam, secondParam);
             break;
         case 'rm':
-            removeFile(param);
+            removeFile(firstParam);
             break;
         case 'oc':
-            handleOcOperations(param);
+            handleOcOperations(firstParam);
             break;
 
         case 'compress':
-            compress(param, values[2]?.trim());
+            compress(firstParam, secondParam);
             break;
 
         case 'decompress':
-            decompress(param, values[2]?.trim());
+            decompress(firstParam, secondParam);
             break;
 
         case 'hash':
-            calculateHash(param);
+            calculateHash(firstParam);
             break;
         default:
             console.log('Operation is not defined')
         }
     } catch (e) {
-        console.log('Operation failed', e);
+        logError(e);
     }
 };
 

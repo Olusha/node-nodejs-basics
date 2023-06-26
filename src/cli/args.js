@@ -1,15 +1,14 @@
-const getArgsMap = () => {
+const parseArgs = () => {
     const props = process.argv.filter(arg => arg.startsWith('--'));
 
-    const argsMap = new Map();
-    props.forEach(prop => {
+    const keyValue = props.map(prop => {
         const sp = prop.split('=');
         const key = sp[0].slice(2)
         const value = sp[1];
-        argsMap.set(key, value);
+        return `${key} is ${value}`;
     });
 
-    return argsMap;
+    console.log(keyValue.join(', '))
 };
 
-export {getArgsMap}
+parseArgs();

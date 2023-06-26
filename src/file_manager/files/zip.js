@@ -1,21 +1,21 @@
-import { createGzip, createUnzip } from 'zlib';
+import { createBrotliCompress, createBrotliDecompress } from 'zlib';
 import { createReadStream, createWriteStream } from 'fs';
 import { pipeline } from 'stream/promises';
 
 const decompress = async (sousePath, destPath) => {
-    const unzip = createUnzip();
+    const brotliDecompress = createBrotliDecompress();
     const readStream = createReadStream(sousePath);
     const destination = createWriteStream(destPath);
 
-    await pipeline(readStream, unzip, destination);
+    await pipeline(readStream, brotliDecompress, destination);
 };
 
 const compress = async (sousePath, destPath) => {
-    const gzip = createGzip();
+    const brotliCompress = createBrotliCompress();
     const sourceStream = createReadStream(sousePath);
     const destinationStream = createWriteStream(destPath);
 
-    await pipeline(sourceStream, gzip, destinationStream);
+    await pipeline(sourceStream, brotliCompress, destinationStream);
 };
 
 

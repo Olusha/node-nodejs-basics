@@ -1,6 +1,11 @@
 import { homedir } from 'os';
 import fs from 'fs/promises';
 import { join } from 'path';
+import { logError } from './utils.js';
+
+const logPosition = () => {
+    console.log(`You are currently in ${process.cwd()}`)
+}
 
 const changeDirectory = (path) => {
     if(!path) {
@@ -10,33 +15,51 @@ const changeDirectory = (path) => {
 
     try {
         process.chdir(path);
-        console.log(`You are currently in ${process.cwd()}`)
+        logPosition();
     } catch (err) {
-        console.log('Operation failed', err)
+        logError(err);
     }
 
 }
 
 const printLsInfo = async () => {
-    console.log('PRINT INFO')
     try {
         console.log(process.cwd())
-        const files = await fs.readdir(process.cwd(), { withFileTypes: true });
-        const data = [];
-        for (const file of files) {
-            data.push({ Name: file.name, Type: file.isDirectory() ? 'directory' : 'file' });
+        const entries = await fs.readdir(process.cwd(), { withFileTypes: true });
+        const dirs = [];
+        const files = [];
+        for (const entry of entries) {
+            if(entry.isDirectory()) {
+                dirs.push({ Name: entry.name, Type: 'directory'});
+            } else {
+                files.push({ Name: entry.name, Type: 'file'});
+            }
         }
 
-        console.table(data);
+        dirs.sort(sortByName);
+        files.sort(sortByName);
+
+        console.table([...dirs, ...files]);
     } catch (e) {
-        console.log(e)
+        logError(e);
     }
+}
+
+const sortByName = (a, b) => {
+    if (a.name < b.name) {
+        return -1;
+    }
+    if (a.name > b.name) {
+        return 1;
+    }
+    return 0;
 }
 
 const goUp = () => {
     const currentDir = process.cwd();
 
     if (currentDir === homedir()) {
+        logPosition();
         return;
     }
 

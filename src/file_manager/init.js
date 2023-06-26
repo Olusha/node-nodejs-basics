@@ -1,13 +1,14 @@
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import { spawn } from 'child_process';
+import { logError } from './files/utils.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 const spawnChildProcess = async () => {
     const path = `${__dirname}/files/main.js`;
-    const childProcess = spawn('node', [path]);
+    const childProcess = spawn('node', [path, ...process.argv]);
 
     process.stdin.on('data', (value) => {
         childProcess.stdin.write(value);
@@ -19,12 +20,11 @@ const spawnChildProcess = async () => {
 
 
     childProcess.on('exit', (value) => {
-        console.log('EXIT', value)
         process.exit(0);
     })
 
     childProcess.on('error', (error) => {
-        console.log('ERROR', error)
+        logError(error);
     })
 };
 

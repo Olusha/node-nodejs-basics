@@ -1,56 +1,30 @@
 import { arch, cpus, EOL, homedir, userInfo } from 'os';
-
-
-const printEOL = () => {
-    console.log(EOL)
-}
-
-const printCpus = () => {
-    const cp = cpus();
-    console.table(cp);
-}
-
-const printHomedir = () => {
-    console.log(homedir());
-}
-
-const printUserName = () => {
-    console.log('username', userInfo().username);
-}
-
-const printArchitecture = () => {
-    console.log(arch());
-}
+import { logError } from './utils.js';
 
 const handleOcOperations = (param) => {
-    console.log(param)
     try {
-        if (param === '--EOL') {
-            printEOL();
-            return;
-        }
-
-        if (param === '--cpus') {
-            printCpus();
-            return;
-        }
-
-        if (param === '--homedir') {
-            printHomedir();
-            return;
-        }
-
-        if (param === '--username') {
-            printUserName();
-            return;
-        }
-
-        if (param === '--architecture') {
-            printArchitecture();
-            return;
+        switch (param) {
+        case '--EOL':
+            console.log(EOL);
+            break;
+        case '--cpus':
+            const cp = cpus();
+            console.table(cp);
+            break;
+        case '--homedir':
+            console.log(homedir());
+            break;
+        case '--username':
+            console.log(userInfo().username);
+            break;
+        case '--architecture':
+            console.log(arch());
+            break;
+        default:
+            console.log('Operation is not defined');
         }
     } catch (e) {
-        console.log(e)
+        logError(e);
     }
 }
 

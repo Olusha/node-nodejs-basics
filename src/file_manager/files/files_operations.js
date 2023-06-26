@@ -1,5 +1,6 @@
 import fs, { open } from 'fs/promises';
-import {getFullPath} from './utils.js';
+import {createWriteStream} from 'fs';
+import { getFullPath, logError } from './utils.js';
 
 const printFileContent = async (fileName) => {
     const fullPath = getFullPath(fileName);
@@ -10,7 +11,7 @@ const printFileContent = async (fileName) => {
             process.stdout.write(`${data}\n`);
         });
     } catch (e) {
-        console.log('Operation failed', e)
+        logError(e);
     }
 
 }
@@ -21,7 +22,7 @@ const createFile = async (fileName) => {
         const fullPath = getFullPath(fileName)
         await fs.writeFile(fullPath, '', { flag: 'wx' });
     } catch (e) {
-        console.log('Operation failed', e);
+        logError(e);
     }
 }
 
@@ -30,19 +31,36 @@ const removeFile = async (fileName) => {
         const fullPath = getFullPath(fileName);
         await fs.unlink(fullPath);
     } catch (e) {
-        console.log('Operation failed', e);
+        logError(e);
     }
 }
 
-const renameFile = () => {
-
+const renameFile = async (oldPath, newPath) => {
+    try {
+        await fs.rename(oldPath, newPath);
+    } catch (e) {
+        logError(e)
+    }
 }
 
-const copyFile = () => {
-
+const copyFile = async (pathToFile,  pathToNewDirectory) => {
+    try {
+        const fd = await open(pathToFile);
+        const readableStream = fd.createReadStream({ encoding: 'utf8' });
+        const writable = createWriteStream(pathToNewDirectory);
+        readableStream.pipe(writable);
+    } catch (e) {
+        logError(e);
+    }
 }
 
-const moveFile = () => {
-
+const moveFile = async (pathToFile,  pathToNewDirectory) => {
+    try {
+        await copyFile(pathToFile, pathToNewDirectory);
+        await removeFile(pathToFile);
+    } catch (e) {
+        logError(e)
+    }
 }
+
 export { createFile, printFileContent, removeFile, renameFile, moveFile, copyFile }
