@@ -1,12 +1,11 @@
-import fs, { open } from 'fs/promises';
-import {createWriteStream} from 'fs';
+import fs from 'fs/promises';
+import {createWriteStream, createReadStream} from 'fs';
 import { getFullPath, logError } from './utils.js';
 
 const printFileContent = async (fileName) => {
     const fullPath = getFullPath(fileName);
     try {
-        const fd = await open(fullPath);
-        const readableStream = fd.createReadStream({ encoding: 'utf8' });
+        const readableStream = createReadStream(fullPath, { encoding: 'utf8' });
         readableStream.on('data', (data) => {
             process.stdout.write(`${data}\n`);
         });
@@ -45,8 +44,7 @@ const renameFile = async (oldPath, newPath) => {
 
 const copyFile = async (pathToFile,  pathToNewDirectory) => {
     try {
-        const fd = await open(pathToFile);
-        const readableStream = fd.createReadStream({ encoding: 'utf8' });
+        const readableStream = createReadStream(pathToFile, { encoding: 'utf8' });
         const writable = createWriteStream(pathToNewDirectory);
         readableStream.pipe(writable);
     } catch (e) {
